@@ -1754,6 +1754,79 @@ h1, h2, h3, h4 {
   justify-content: flex-end;
 }
 
+/* --- Ajouter article form --- */
+.ajouter-form {
+  max-width: 800px;
+  margin: 0 auto;
+  background-color: #fcf9f2;
+  padding: 2.5rem;
+  border: 1px solid #e0bfbc;
+}
+
+.ajouter-form .form-submit {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+/* --- File upload area --- */
+.file-upload-area {
+  border: 2px dashed #d5c5c2;
+  border-radius: 0.25rem;
+  padding: 3rem 2rem;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.3s, background-color 0.3s;
+  position: relative;
+  background-color: #fff;
+}
+
+.file-upload-area:hover {
+  border-color: #A8841E;
+  background-color: #f6f3ec;
+}
+
+.file-upload-area.drag-over {
+  border-color: #A8841E;
+  background-color: #efe9dd;
+}
+
+.file-upload-input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.file-upload-icon {
+  font-size: 48px;
+  color: #A8841E;
+  margin-bottom: 0.5rem;
+}
+
+.file-upload-text {
+  color: #58413f;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* --- Image preview --- */
+.image-preview {
+  display: none;
+  margin-top: 0.75rem;
+  text-align: center;
+}
+
+.image-preview img {
+  max-width: 100%;
+  max-height: 400px;
+  border: 1px solid #e0bfbc;
+  border-radius: 0.25rem;
+  padding: 0.25rem;
+  background-color: #fff;
+}
+
 /* --- Admin responsive --- */
 @media (max-width: 768px) {
   .admin-header-inner {

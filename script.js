@@ -266,6 +266,15 @@ if (document.querySelector('.admin-page')) {
     });
   });
 
+  // Handle hash on page load for direct section navigation
+  const initHash = window.location.hash.slice(1);
+  if (initHash) {
+    const hashLink = document.querySelector(`.admin-nav-link[href="#${initHash}"]`);
+    if (hashLink) {
+      hashLink.click();
+    }
+  }
+
   renderDashboard();
   renderAdherentsTable();
   renderArticlesTable();
@@ -485,11 +494,9 @@ function setupArticleModal() {
   const overlay = document.getElementById('articleModal');
   if (!overlay) return;
 
-  document.getElementById('btnAddArticle').addEventListener('click', () => {
-    document.getElementById('articleModalTitle').textContent = 'Ajouter un article';
-    document.getElementById('editArticleId').value = '';
-    document.getElementById('articleForm').reset();
-    overlay.classList.add('open');
+  document.getElementById('btnAddArticle').addEventListener('click', (e) => {
+    e.preventDefault();
+    window.location.href = 'ajouter.html';
   });
 
   document.getElementById('articleModalClose').addEventListener('click', () => overlay.classList.remove('open'));
