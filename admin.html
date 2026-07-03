@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Administration — Commanderie du Comté de l'Yssingelais</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="admin-page">
+  <!-- Admin Header -->
+  <header class="admin-header">
+    <div class="admin-header-inner">
+      <a href="index.html" class="admin-brand">
+        <span class="material-symbols-outlined icon-shield">shield</span>
+        <span>Admin — Commanderie</span>
+      </a>
+      <nav class="admin-nav">
+        <a href="#dashboard" class="admin-nav-link active">Tableau de bord</a>
+        <a href="#adherents" class="admin-nav-link">Adhérents</a>
+        <a href="#articles" class="admin-nav-link">Articles</a>
+      </nav>
+      <a href="index.html" class="btn btn-outline btn-sm">
+        <span class="material-symbols-outlined">arrow_back</span> Site public
+      </a>
+    </div>
+  </header>
+
+  <div class="admin-layout">
+    <!-- Dashboard -->
+    <section id="dashboard" class="admin-section active">
+      <div class="admin-section-header">
+        <h2>Tableau de bord</h2>
+      </div>
+      <div class="admin-stats-grid">
+        <div class="admin-stat-card">
+          <span class="material-symbols-outlined admin-stat-icon">groups</span>
+          <div>
+            <span class="admin-stat-number" id="statAdherents">0</span>
+            <span class="admin-stat-label">Adhérents</span>
+          </div>
+        </div>
+        <div class="admin-stat-card">
+          <span class="material-symbols-outlined admin-stat-icon">article</span>
+          <div>
+            <span class="admin-stat-number" id="statArticles">0</span>
+            <span class="admin-stat-label">Articles</span>
+          </div>
+        </div>
+        <div class="admin-stat-card">
+          <span class="material-symbols-outlined admin-stat-icon">person_add</span>
+          <div>
+            <span class="admin-stat-number" id="statNewThisMonth">0</span>
+            <span class="admin-stat-label">Nouveaux ce mois</span>
+          </div>
+        </div>
+        <div class="admin-stat-card">
+          <span class="material-symbols-outlined admin-stat-icon">calendar_month</span>
+          <div>
+            <span class="admin-stat-number" id="statArticlesThisMonth">0</span>
+            <span class="admin-stat-label">Articles ce mois</span>
+          </div>
+        </div>
+      </div>
+      <div class="admin-recent">
+        <h3>Derniers adhérents</h3>
+        <div class="admin-table-wrap">
+          <table class="admin-table" id="recentAdherentsTable">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Nom</th>
+                <th>Prénom</th>
+                <th>E-mail</th>
+                <th>Date d'inscription</th>
+              </tr>
+            </thead>
+            <tbody id="recentAdherentsBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Adherents Management -->
+    <section id="adherents" class="admin-section">
+      <div class="admin-section-header">
+        <h2>Gestion des adhérents</h2>
+        <button class="btn btn-gold" id="btnAddAdherent">+ Nouvel adhérent</button>
+      </div>
+      <div class="admin-table-wrap">
+        <table class="admin-table" id="adherentsTable">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nom</th>
+              <th>Prénom</th>
+              <th>E-mail</th>
+              <th>Téléphone</th>
+              <th>Parrain 1</th>
+              <th>Parrain 2</th>
+              <th>Date naiss.</th>
+              <th>Profession</th>
+              <th>Rôle</th>
+              <th>Inscription</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="adherentsBody"></tbody>
+        </table>
+      </div>
+
+      <!-- Adherent Modal -->
+      <div class="admin-modal-overlay" id="adherentModal">
+        <div class="admin-modal">
+          <div class="admin-modal-header">
+            <h3 id="adherentModalTitle">Ajouter un adhérent</h3>
+            <button class="admin-modal-close" id="adherentModalClose">&times;</button>
+          </div>
+          <form class="admin-modal-form" id="adherentForm">
+            <input type="hidden" id="editAdherentId">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="aNom">Nom *</label>
+                <input type="text" id="aNom" name="Nom" required>
+              </div>
+              <div class="form-group">
+                <label for="aPrenom">Prénom *</label>
+                <input type="text" id="aPrenom" name="Prénom" required>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="aMail">E-mail *</label>
+                <input type="email" id="aMail" name="Mail" required>
+              </div>
+              <div class="form-group">
+                <label for="aTelephone">Téléphone *</label>
+                <input type="tel" id="aTelephone" name="Numero_telephone" required>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="aDateNaissance">Date de naissance *</label>
+                <input type="date" id="aDateNaissance" name="Date_de_naissance" required>
+              </div>
+              <div class="form-group">
+                <label for="aLieuNaissance">Lieu de naissance</label>
+                <input type="text" id="aLieuNaissance" name="Lieu_naissance">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="aProfession">Profession</label>
+                <input type="text" id="aProfession" name="Profession">
+              </div>
+              <div class="form-group">
+                <label for="aAdressePerso">Adresse personnelle</label>
+                <input type="text" id="aAdressePerso" name="Adresse_perso">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="aAdressePro">Adresse professionnelle</label>
+                <input type="text" id="aAdressePro" name="Adresse_pro">
+              </div>
+              <div class="form-group">
+                <label for="a1erParrain">1er parrain</label>
+                <input type="text" id="a1erParrain" name="1er_parrain">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="a2emeParrain">2ème parrain</label>
+                <input type="text" id="a2emeParrain" name="2eme_parrain">
+              </div>
+              <div class="form-group">
+                <label for="aNomConjoint">Nom conjoint</label>
+                <input type="text" id="aNomConjoint" name="Nom_conjoint">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="aPrenomConjoint">Prénom conjoint</label>
+                <input type="text" id="aPrenomConjoint" name="Prénom_conjoint">
+              </div>
+              <div class="form-group">
+                <label for="aRole">Rôle</label>
+                <select id="aRole" name="Role">
+                  <option value="0">Membre</option>
+                  <option value="1">Admin</option>
+                  <option value="2">Dignitaire</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-submit">
+              <button type="submit" class="btn btn-gold">Enregistrer</button>
+              <button type="button" class="btn btn-outline" id="adherentModalCancel">Annuler</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- Articles Management -->
+    <section id="articles" class="admin-section">
+      <div class="admin-section-header">
+        <h2>Gestion des articles</h2>
+        <button class="btn btn-gold" id="btnAddArticle">+ Nouvel article</button>
+      </div>
+      <div class="admin-table-wrap">
+        <table class="admin-table" id="articlesTable">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Titre</th>
+              <th>Description</th>
+              <th>Image</th>
+              <th>Date publication</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="articlesBody"></tbody>
+        </table>
+      </div>
+
+      <!-- Article Modal -->
+      <div class="admin-modal-overlay" id="articleModal">
+        <div class="admin-modal">
+          <div class="admin-modal-header">
+            <h3 id="articleModalTitle">Ajouter un article</h3>
+            <button class="admin-modal-close" id="articleModalClose">&times;</button>
+          </div>
+          <form class="admin-modal-form" id="articleForm">
+            <input type="hidden" id="editArticleId">
+            <div class="form-group">
+              <label for="aTitre">Titre *</label>
+              <input type="text" id="aTitre" name="Titre" required>
+            </div>
+            <div class="form-group">
+              <label for="aDescription">Description</label>
+              <textarea id="aDescription" name="Description" rows="4"></textarea>
+            </div>
+            <div class="form-group">
+              <label for="aLienImage">Lien de l'image</label>
+              <input type="text" id="aLienImage" name="Lien_image" placeholder="URL de l'image">
+            </div>
+            <div class="form-submit">
+              <button type="submit" class="btn btn-gold">Enregistrer</button>
+              <button type="button" class="btn btn-outline" id="articleModalCancel">Annuler</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
