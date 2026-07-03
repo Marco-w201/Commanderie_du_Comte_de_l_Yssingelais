@@ -384,8 +384,11 @@
               </label>
             </div>
           </div>
+          <div class="form-group">
+            <div id="adhesionRecaptcha"></div>
+          </div>
           <div class="form-submit">
-            <button type="submit" class="btn btn-gold btn-lg">Envoyer ma candidature</button>
+            <button type="submit" class="btn btn-gold btn-lg" id="adhesionSubmitBtn">Envoyer ma candidature</button>
           </div>
         </form>
         <div id="adhesionMessage" class="form-message"></div>
@@ -463,6 +466,8 @@
     </div>
   </footer>
 
+  <script src="config.js"></script>
+  <script src="https://www.google.com/recaptcha/api.js?onload=onloadRecaptcha&render=explicit" async defer></script>
   <script src="script.js"></script>
 </body>
 </html>

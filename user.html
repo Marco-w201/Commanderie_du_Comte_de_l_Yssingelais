@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Espace Membre — Commanderie du Comté de l'Yssingelais</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="user-page">
+  <header class="admin-header">
+    <div class="admin-header-inner">
+      <a href="index.html" class="admin-brand">
+        <span class="material-symbols-outlined icon-shield">shield</span>
+        <span>Espace Membre</span>
+      </a>
+      <nav class="admin-nav">
+        <a href="#dashboard" class="admin-nav-link active">Tableau de bord</a>
+        <a href="#profil" class="admin-nav-link">Mon profil</a>
+      </nav>
+      <div>
+        <span class="user-email-badge" id="userEmailBadge"></span>
+        <a href="index.html" class="btn btn-outline btn-sm" style="margin-left:0.75rem">
+          <span class="material-symbols-outlined">arrow_back</span> Site public
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <div class="admin-layout">
+    <section id="dashboard" class="admin-section active">
+      <div class="admin-section-header">
+        <h2>Tableau de bord</h2>
+      </div>
+      <div class="user-welcome">
+        <div class="user-avatar">
+          <span class="material-symbols-outlined" style="font-size:64px;color:#A8841E">account_circle</span>
+        </div>
+        <div>
+          <h3 id="userWelcomeName">Bienvenue</h3>
+          <p class="section-desc" style="margin:0">Vous êtes connecté en tant que membre de la Commanderie du Comté de l'Yssingelais.</p>
+        </div>
+      </div>
+      <div class="admin-stats-grid" style="margin-top:2rem">
+        <div class="admin-stat-card">
+          <span class="material-symbols-outlined admin-stat-icon">calendar_month</span>
+          <div>
+            <span class="admin-stat-number">2024</span>
+            <span class="admin-stat-label">Membre depuis</span>
+          </div>
+        </div>
+        <div class="admin-stat-card">
+          <span class="material-symbols-outlined admin-stat-icon">event</span>
+          <div>
+            <span class="admin-stat-number">3</span>
+            <span class="admin-stat-label">Événements à venir</span>
+          </div>
+        </div>
+        <div class="admin-stat-card">
+          <span class="material-symbols-outlined admin-stat-icon">volunteer_activism</span>
+          <div>
+            <span class="admin-stat-number">2</span>
+            <span class="admin-stat-label">Actions caritatives</span>
+          </div>
+        </div>
+        <div class="admin-stat-card">
+          <span class="material-symbols-outlined admin-stat-icon">article</span>
+          <div>
+            <span class="admin-stat-number" id="userStatArticles">0</span>
+            <span class="admin-stat-label">Actualités</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="profil" class="admin-section">
+      <div class="admin-section-header">
+        <h2>Mon profil</h2>
+      </div>
+      <div class="user-profile-card">
+        <div class="user-profile-field">
+          <span class="user-profile-label">Adresse e-mail</span>
+          <span class="user-profile-value" id="profileEmail">—</span>
+        </div>
+        <div class="user-profile-field">
+          <span class="user-profile-label">Rôle</span>
+          <span class="user-profile-value" id="profileRole">Membre</span>
+        </div>
+      </div>
+      <div style="margin-top:2rem;text-align:center">
+        <button id="btnLogout" class="btn btn-outline">Se déconnecter</button>
+      </div>
+    </section>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

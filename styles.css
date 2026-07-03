@@ -1833,6 +1833,83 @@ h1, h2, h3, h4 {
   background-color: #fff;
 }
 
+/* --- User Page --- */
+.user-page {
+  background-color: #f0eee7;
+  min-height: 100vh;
+}
+
+.user-email-badge {
+  font-size: 14px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.85);
+  background-color: rgba(255,255,255,0.1);
+  padding: 0.35rem 0.75rem;
+  border-radius: 0.25rem;
+}
+
+.user-welcome {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  background-color: #fcf9f2;
+  padding: 2rem;
+  border: 1px solid #e0bfbc;
+}
+
+.user-avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background-color: #f0eee7;
+  border: 2px solid #A8841E;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.user-welcome h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 24px;
+  color: #690008;
+  margin-bottom: 0.5rem;
+}
+
+.user-profile-card {
+  max-width: 600px;
+  margin: 0 auto;
+  background-color: #fcf9f2;
+  padding: 2rem;
+  border: 1px solid #e0bfbc;
+}
+
+.user-profile-field {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 0;
+  border-bottom: 1px solid #e0bfbc;
+}
+
+.user-profile-field:last-child {
+  border-bottom: none;
+}
+
+.user-profile-label {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #58413f;
+}
+
+.user-profile-value {
+  font-size: 16px;
+  color: #1c1c18;
+  font-weight: 600;
+}
+
 /* --- Admin responsive --- */
 @media (max-width: 768px) {
   .admin-header-inner {

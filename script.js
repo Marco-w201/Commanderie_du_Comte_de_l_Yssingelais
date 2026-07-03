@@ -1,22 +1,44 @@
 // ============================================
+// Configuration depuis config.js
+// ============================================
+const CFG = (typeof APP_CONFIG !== 'undefined') ? APP_CONFIG : {};
+
+function getDefaultUsers() {
+  return CFG.users || [
+    { email: 'superadmin@commanderie.fr', password: 'super123', role: 2 },
+    { email: 'admin@commanderie.fr', password: 'admin123', role: 1 },
+    { email: 'user@commanderie.fr', password: 'user123', role: 0 }
+  ];
+}
+
+// ============================================
+// reCAPTCHA
+// ============================================
+function onloadRecaptcha() {
+  const el = document.getElementById('adhesionRecaptcha');
+  if (el && typeof grecaptcha !== 'undefined' && CFG.recaptchaSiteKey) {
+    grecaptcha.render(el, { sitekey: CFG.recaptchaSiteKey });
+  }
+}
+
+// ============================================
 // Base de données locale (localStorage)
 // ============================================
 const DB_KEY = 'commanderie_db';
 
 function initDB() {
+  const defaultUsers = getDefaultUsers();
   const existing = localStorage.getItem(DB_KEY);
   if (existing) {
     const db = JSON.parse(existing);
     let changed = false;
     if (!db.users) { db.users = []; changed = true; }
-    if (!db.users.find(u => u.email === 'superadmin@commanderie.fr')) {
-      db.users.push({ email: 'superadmin@commanderie.fr', password: 'super123', role: 2 });
-      changed = true;
-    }
-    if (!db.users.find(u => u.email === 'admin@commanderie.fr')) {
-      db.users.push({ email: 'admin@commanderie.fr', password: 'admin123', role: 1 });
-      changed = true;
-    }
+    defaultUsers.forEach(u => {
+      if (!db.users.find(x => x.email === u.email)) {
+        db.users.push({ ...u });
+        changed = true;
+      }
+    });
     if (!db.nextAdherentId) { db.nextAdherentId = 8; changed = true; }
     if (!db.nextArticleId) { db.nextArticleId = 4; changed = true; }
     if (changed) localStorage.setItem(DB_KEY, JSON.stringify(db));
@@ -32,10 +54,7 @@ function initDB() {
       { id: 2, Date_publication: '2026-05-20T08:30:00Z', Titre: 'Don de 2 500 € à Entr\'Aides 43', Description: 'Lors de notre dernière assemblée, nous avons remis un don de 2 500 € à l\'association Entr\'Aides 43 pour soutenir leurs actions locales.', Lien_image: null },
       { id: 3, Date_publication: '2026-04-10T14:00:00Z', Titre: 'Soirée de dégustation — Secrets de l\'Anis Étoilé', Description: 'Une soirée gastronomique ouverte au public pour découvrir les secrets de l\'anis étoilé. Rendez-vous le 12 décembre à la salle des fêtes d\'Yssingeaux.', Lien_image: null }
     ],
-    users: [
-      { email: 'admin@commanderie.fr', password: 'admin123', role: 1 },
-      { email: 'superadmin@commanderie.fr', password: 'super123', role: 2 }
-    ],
+    users: defaultUsers.map(u => ({ ...u })),
     nextAdherentId: 8,
     nextArticleId: 4
   };
@@ -205,6 +224,22 @@ const adhesionForm = document.getElementById('adhesionForm');
 if (adhesionForm) {
   adhesionForm.addEventListener('submit', (e) => {
     e.preventDefault();
+    const submitBtn = document.getElementById('adhesionSubmitBtn');
+    if (submitBtn) submitBtn.disabled = true;
+
+    if (typeof grecaptcha !== 'undefined') {
+      const resp = grecaptcha.getResponse();
+      if (!resp) {
+        const msg = document.getElementById('adhesionMessage');
+        if (msg) {
+          msg.textContent = 'Veuillez valider le reCAPTCHA.';
+          msg.className = 'form-message error';
+        }
+        if (submitBtn) submitBtn.disabled = false;
+        return;
+      }
+    }
+
     const fd = new FormData(adhesionForm);
     const db = getDB();
     const adherent = {
@@ -255,7 +290,8 @@ if (loginForm) {
       sessionStorage.setItem('adminRole', user.role);
       msg.textContent = 'Connexion réussie ! Redirection...';
       msg.className = 'form-message success';
-      setTimeout(() => { window.location.href = 'admin.html'; }, 1000);
+      const target = user.role === 0 ? 'user.html' : 'admin.html';
+      setTimeout(() => { window.location.href = target; }, 1000);
     } else {
       msg.textContent = 'E-mail ou mot de passe incorrect.';
       msg.className = 'form-message error';
@@ -269,8 +305,9 @@ if (loginForm) {
 if (document.querySelector('.admin-page')) {
   checkAdminAuth();
 
-  // Show users tab only for super admin
-  if (isSuperAdmin()) {
+  // Show users tab for both admin and super admin
+  const currentRole = parseInt(sessionStorage.getItem('adminRole'));
+  if (currentRole >= 1) {
     document.getElementById('navUsers').style.display = '';
   }
 
@@ -307,14 +344,16 @@ if (document.querySelector('.admin-page')) {
   // Modal logic
   setupAdherentModal();
   setupArticleModal();
-  if (isSuperAdmin()) {
-    setupUserModal();
-  }
+  setupUserModal();
 }
 
 function checkAdminAuth() {
   if (!sessionStorage.getItem('adminLoggedIn')) {
     window.location.href = 'login.html';
+  }
+  const role = parseInt(sessionStorage.getItem('adminRole'));
+  if (role === 0) {
+    window.location.href = 'user.html';
   }
 }
 
@@ -600,7 +639,7 @@ function renderUsersTable() {
   tbody.innerHTML = db.users.map((u, i) => `
     <tr>
       <td>${u.email}</td>
-      <td>${u.role === 2 ? 'Super Admin' : 'Admin'}</td>
+      <td>${u.role === 2 ? 'Super Admin' : u.role === 1 ? 'Admin' : 'Utilisateur'}</td>
       <td>
         <div class="admin-table-actions">
           ${u.email !== currentEmail ? `
@@ -624,11 +663,25 @@ function renderUsersTable() {
   });
 }
 
+function filterUserRoles() {
+  const currentRole = parseInt(sessionStorage.getItem('adminRole'));
+  const roleSelect = document.getElementById('uRole');
+  Array.from(roleSelect.options).forEach(opt => {
+    const val = parseInt(opt.value);
+    if (currentRole === 1) {
+      opt.style.display = val === 0 ? '' : 'none';
+    } else {
+      opt.style.display = '';
+    }
+  });
+}
+
 function setupUserModal() {
   const overlay = document.getElementById('userModal');
   if (!overlay) return;
 
   document.getElementById('btnAddUser').addEventListener('click', () => {
+    filterUserRoles();
     document.getElementById('userModalTitle').textContent = 'Ajouter un utilisateur';
     document.getElementById('editUserIndex').value = '';
     document.getElementById('userForm').reset();
@@ -645,9 +698,17 @@ function setupUserModal() {
     const db = getDB();
     const fd = new FormData(e.target);
     const editIndex = document.getElementById('editUserIndex').value;
+    const currentRole = parseInt(sessionStorage.getItem('adminRole'));
 
     const email = fd.get('Email').trim();
     const password = fd.get('Password').trim();
+    const selectedRole = parseInt(fd.get('Role')) || 0;
+
+    // Admin can only create/manage users (role 0)
+    if (currentRole === 1 && selectedRole !== 0) {
+      alert('Vous ne pouvez créer que des utilisateurs (rôle Utilisateur).');
+      return;
+    }
 
     // Check duplicate email
     const existingIdx = db.users.findIndex((u, i) => u.email === email && i !== parseInt(editIndex || -1));
@@ -658,9 +719,15 @@ function setupUserModal() {
 
     if (editIndex) {
       const idx = parseInt(editIndex);
+      const targetUser = db.users[idx];
+      // Admin can only edit users (role 0), not admins/super admins
+      if (currentRole === 1 && targetUser.role !== 0) {
+        alert('Vous ne pouvez modifier que les utilisateurs (rôle Utilisateur).');
+        return;
+      }
       db.users[idx].email = email;
       if (password) db.users[idx].password = password;
-      db.users[idx].role = parseInt(fd.get('Role')) || 1;
+      db.users[idx].role = selectedRole;
     } else {
       if (!password) {
         alert('Le mot de passe est requis.');
@@ -669,7 +736,7 @@ function setupUserModal() {
       db.users.push({
         email: email,
         password: password,
-        role: parseInt(fd.get('Role')) || 1
+        role: selectedRole
       });
     }
 
@@ -683,6 +750,12 @@ function openUserModal(index) {
   const db = getDB();
   const u = db.users[index];
   if (!u) return;
+  const currentRole = parseInt(sessionStorage.getItem('adminRole'));
+  if (currentRole === 1 && u.role !== 0) {
+    alert('Vous ne pouvez modifier que les utilisateurs (rôle Utilisateur).');
+    return;
+  }
+  filterUserRoles();
   document.getElementById('userModalTitle').textContent = "Modifier un utilisateur";
   document.getElementById('editUserIndex').value = index;
   document.getElementById('uEmail').value = u.email;
@@ -697,12 +770,72 @@ function deleteUser(index) {
   const u = db.users[index];
   if (!u) return;
   const currentEmail = sessionStorage.getItem('adminEmail');
+  const currentRole = parseInt(sessionStorage.getItem('adminRole'));
   if (u.email === currentEmail) {
     alert('Vous ne pouvez pas vous supprimer vous-même.');
+    return;
+  }
+  if (currentRole === 1 && u.role !== 0) {
+    alert('Vous ne pouvez supprimer que les utilisateurs (rôle Utilisateur).');
     return;
   }
   if (!confirm(`Supprimer l'utilisateur ${u.email} ?`)) return;
   db.users.splice(index, 1);
   saveDB(db);
   renderUsersTable();
+}
+
+// ============================================
+// User Page (user.html)
+// ============================================
+if (document.querySelector('.user-page')) {
+  if (!sessionStorage.getItem('adminLoggedIn')) {
+    window.location.href = 'login.html';
+  } else {
+    renderUserPage();
+  }
+}
+
+function renderUserPage() {
+  const email = sessionStorage.getItem('adminEmail');
+  const badge = document.getElementById('userEmailBadge');
+  if (badge) badge.textContent = email;
+
+  const welcome = document.getElementById('userWelcomeName');
+  if (welcome) welcome.textContent = 'Bienvenue, ' + (email || 'Membre');
+
+  const profileEmail = document.getElementById('profileEmail');
+  if (profileEmail) profileEmail.textContent = email;
+
+  const profileRole = document.getElementById('profileRole');
+  if (profileRole) profileRole.textContent = 'Membre';
+
+  const db = getDB();
+  const articleCount = (db.articles || []).length;
+  const statEl = document.getElementById('userStatArticles');
+  if (statEl) statEl.textContent = articleCount;
+
+  // Navigation tabs
+  document.querySelectorAll('.admin-nav-link').forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      const target = link.getAttribute('href').slice(1);
+      document.querySelectorAll('.admin-nav-link').forEach(l => l.classList.remove('active'));
+      link.classList.add('active');
+      document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
+      const section = document.getElementById(target);
+      if (section) section.classList.add('active');
+    });
+  });
+
+  // Logout
+  const logoutBtn = document.getElementById('btnLogout');
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', () => {
+      sessionStorage.removeItem('adminLoggedIn');
+      sessionStorage.removeItem('adminEmail');
+      sessionStorage.removeItem('adminRole');
+      window.location.href = 'login.html';
+    });
+  }
 }
