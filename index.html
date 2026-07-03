@@ -43,9 +43,11 @@
         <a href="#actions" class="nav-link">Actions caritatives</a>
         <a href="#agenda" class="nav-link">Agenda &amp; Médias</a>
         <a href="#partenaires" class="nav-link">Partenaires</a>
+        <a href="#articles" class="nav-link">Actualités</a>
       </nav>
       <div class="header-actions">
-        <a href="#contact" class="btn btn-primary">Contact &amp; Adhésion</a>
+        <a href="login.html" class="btn btn-outline">Connexion</a>
+        <a href="#adhesion" class="btn btn-primary">Adhésion</a>
         <button class="menu-toggle" id="menuToggle" aria-label="Menu">
           <span class="material-symbols-outlined text-primary">menu</span>
         </button>
@@ -58,7 +60,9 @@
       <a href="#actions" class="nav-link">Actions caritatives</a>
       <a href="#agenda" class="nav-link">Agenda &amp; Médias</a>
       <a href="#partenaires" class="nav-link">Partenaires</a>
-      <a href="#contact" class="nav-link">Contact &amp; Adhésion</a>
+      <a href="#articles" class="nav-link">Actualités</a>
+      <a href="#adhesion" class="nav-link">Adhésion</a>
+      <a href="login.html" class="nav-link">Connexion</a>
     </div>
   </header>
 
@@ -281,6 +285,113 @@
       </div>
     </section>
 
+    <!-- Articles / Actualités -->
+    <section id="articles" class="section section-articles">
+      <div class="container">
+        <div class="section-header-center">
+          <h2 class="section-title">Actualités &amp; Publications</h2>
+          <div class="heraldic-divider">
+            <span class="material-symbols-outlined text-gold">article</span>
+          </div>
+          <p class="section-desc">Retrouvez les dernières actualités de la Commanderie.</p>
+        </div>
+        <div class="articles-grid" id="articlesGrid">
+          <!-- Les articles seront chargés dynamiquement depuis la base -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Adhésion -->
+    <section id="adhesion" class="section section-adhesion">
+      <div class="container">
+        <div class="section-header-center">
+          <h2 class="section-title">Devenir Membre</h2>
+          <div class="heraldic-divider">
+            <span class="material-symbols-outlined text-gold">person_add</span>
+          </div>
+          <p class="section-desc">Rejoignez la Commanderie du Comté de l'Yssingelais en remplissant le formulaire ci-dessous.</p>
+        </div>
+        <form class="adhesion-form" id="adhesionForm">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="nom">Nom *</label>
+              <input type="text" id="nom" name="Nom" required placeholder="Votre nom">
+            </div>
+            <div class="form-group">
+              <label for="prenom">Prénom *</label>
+              <input type="text" id="prenom" name="Prénom" required placeholder="Votre prénom">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="mail">Adresse e-mail *</label>
+              <input type="email" id="mail" name="Mail" required placeholder="votre@email.fr">
+            </div>
+            <div class="form-group">
+              <label for="telephone">Numéro de téléphone *</label>
+              <input type="tel" id="telephone" name="Numero_telephone" required placeholder="+33 6 XX XX XX XX">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="date_naissance">Date de naissance *</label>
+              <input type="date" id="date_naissance" name="Date_de_naissance" required>
+            </div>
+            <div class="form-group">
+              <label for="lieu_naissance">Lieu de naissance</label>
+              <input type="text" id="lieu_naissance" name="Lieu_naissance" placeholder="Ville de naissance">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="profession">Profession</label>
+              <input type="text" id="profession" name="Profession" placeholder="Votre profession">
+            </div>
+            <div class="form-group">
+              <label for="adresse_perso">Adresse personnelle</label>
+              <input type="text" id="adresse_perso" name="Adresse_perso" placeholder="Votre adresse">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="adresse_pro">Adresse professionnelle</label>
+              <input type="text" id="adresse_pro" name="Adresse_pro" placeholder="Adresse professionnelle">
+            </div>
+            <div class="form-group">
+              <label for="1er_parrain">1er parrain</label>
+              <input type="text" id="1er_parrain" name="1er_parrain" placeholder="Nom du 1er parrain">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="2eme_parrain">2ème parrain</label>
+              <input type="text" id="2eme_parrain" name="2eme_parrain" placeholder="Nom du 2ème parrain">
+            </div>
+            <div class="form-group">
+              <label for="nom_conjoint">Nom du conjoint</label>
+              <input type="text" id="nom_conjoint" name="Nom_conjoint" placeholder="Nom du conjoint">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="prenom_conjoint">Prénom du conjoint</label>
+              <input type="text" id="prenom_conjoint" name="Prénom_conjoint" placeholder="Prénom du conjoint">
+            </div>
+            <div class="form-group form-group-checkbox">
+              <label class="checkbox-label">
+                <input type="checkbox" id="acceptCharte" required>
+                <span>J'accepte la charte de l'Ordre International des Anysetiers *</span>
+              </label>
+            </div>
+          </div>
+          <div class="form-submit">
+            <button type="submit" class="btn btn-gold btn-lg">Envoyer ma candidature</button>
+          </div>
+        </form>
+        <div id="adhesionMessage" class="form-message"></div>
+      </div>
+    </section>
+
     <!-- Newsletter -->
     <section id="contact" class="section section-newsletter">
       <div class="container newsletter-inner">
@@ -319,16 +430,16 @@
             <li><a href="#">Notre Histoire</a></li>
             <li><a href="#">Dignitaires</a></li>
             <li><a href="#">Le Blason</a></li>
-            <li><a href="#">Nous Rejoindre</a></li>
+            <li><a href="#adhesion">Nous Rejoindre</a></li>
           </ul>
         </div>
         <div class="footer-col">
           <h4 class="footer-heading">Membres</h4>
           <ul>
-            <li><a href="#">Espace Membres</a></li>
+            <li><a href="login.html">Espace Membres</a></li>
             <li><a href="#">Calendrier</a></li>
             <li><a href="#">Photos des Chapitres</a></li>
-            <li><a href="#">Boutique de l'Ordre</a></li>
+            <li><a href="admin.html">Administration</a></li>
           </ul>
         </div>
       </div>
