@@ -157,7 +157,7 @@ function renderArticles() {
     grid.innerHTML = '<p class="section-desc" style="grid-column:1/-1">Aucun article pour le moment.</p>';
     return;
   }
-  db.articles.forEach(article => {
+  db.articles.sort((a, b) => new Date(b.Date_publication) - new Date(a.Date_publication)).forEach(article => {
     const date = new Date(article.Date_publication);
     const dateStr = date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
     const card = document.createElement('div');
