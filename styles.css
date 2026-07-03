@@ -1667,6 +1667,12 @@ h1, h2, h3, h4 {
   gap: 0.5rem;
 }
 
+.admin-table-current {
+  font-size: 0.8rem;
+  color: #888;
+  font-style: italic;
+}
+
 .btn-icon {
   display: inline-flex;
   align-items: center;

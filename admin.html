@@ -22,6 +22,7 @@
         <a href="#dashboard" class="admin-nav-link active">Tableau de bord</a>
         <a href="#adherents" class="admin-nav-link">Adhérents</a>
         <a href="#articles" class="admin-nav-link">Articles</a>
+        <a href="#users" class="admin-nav-link" id="navUsers" style="display:none">Utilisateurs</a>
       </nav>
       <a href="index.html" class="btn btn-outline btn-sm">
         <span class="material-symbols-outlined">arrow_back</span> Site public
@@ -250,6 +251,58 @@
             <div class="form-submit">
               <button type="submit" class="btn btn-gold">Enregistrer</button>
               <button type="button" class="btn btn-outline" id="articleModalCancel">Annuler</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- Users Management (Super Admin only) -->
+    <section id="users" class="admin-section">
+      <div class="admin-section-header">
+        <h2>Gestion des utilisateurs</h2>
+        <button class="btn btn-gold" id="btnAddUser">+ Nouvel utilisateur</button>
+      </div>
+      <div class="admin-table-wrap">
+        <table class="admin-table" id="usersTable">
+          <thead>
+            <tr>
+              <th>E-mail</th>
+              <th>Rôle</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="usersBody"></tbody>
+        </table>
+      </div>
+
+      <!-- User Modal -->
+      <div class="admin-modal-overlay" id="userModal">
+        <div class="admin-modal">
+          <div class="admin-modal-header">
+            <h3 id="userModalTitle">Ajouter un utilisateur</h3>
+            <button class="admin-modal-close" id="userModalClose">&times;</button>
+          </div>
+          <form class="admin-modal-form" id="userForm">
+            <input type="hidden" id="editUserIndex">
+            <div class="form-group">
+              <label for="uEmail">E-mail *</label>
+              <input type="email" id="uEmail" name="Email" required>
+            </div>
+            <div class="form-group">
+              <label for="uPassword">Mot de passe *</label>
+              <input type="password" id="uPassword" name="Password" required>
+            </div>
+            <div class="form-group">
+              <label for="uRole">Rôle</label>
+              <select id="uRole" name="Role">
+                <option value="1">Admin</option>
+                <option value="2">Super Admin</option>
+              </select>
+            </div>
+            <div class="form-submit">
+              <button type="submit" class="btn btn-gold">Enregistrer</button>
+              <button type="button" class="btn btn-outline" id="userModalCancel">Annuler</button>
             </div>
           </form>
         </div>

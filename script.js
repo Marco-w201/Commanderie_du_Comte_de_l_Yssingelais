@@ -16,7 +16,8 @@ function initDB() {
       { id: 3, Date_publication: '2026-04-10T14:00:00Z', Titre: 'Soirée de dégustation — Secrets de l\'Anis Étoilé', Description: 'Une soirée gastronomique ouverte au public pour découvrir les secrets de l\'anis étoilé. Rendez-vous le 12 décembre à la salle des fêtes d\'Yssingeaux.', Lien_image: null }
     ],
     users: [
-      { email: 'admin@commanderie.fr', password: 'admin123', role: 1 }
+      { email: 'admin@commanderie.fr', password: 'admin123', role: 1 },
+      { email: 'superadmin@commanderie.fr', password: 'super123', role: 2 }
     ],
     nextAdherentId: 8,
     nextArticleId: 4
@@ -234,6 +235,7 @@ if (loginForm) {
     if (user) {
       sessionStorage.setItem('adminLoggedIn', 'true');
       sessionStorage.setItem('adminEmail', email);
+      sessionStorage.setItem('adminRole', user.role);
       msg.textContent = 'Connexion réussie ! Redirection...';
       msg.className = 'form-message success';
       setTimeout(() => { window.location.href = 'admin.html'; }, 1000);
@@ -250,6 +252,11 @@ if (loginForm) {
 if (document.querySelector('.admin-page')) {
   checkAdminAuth();
 
+  // Show users tab only for super admin
+  if (isSuperAdmin()) {
+    document.getElementById('navUsers').style.display = '';
+  }
+
   // Navigation tabs
   document.querySelectorAll('.admin-nav-link').forEach(link => {
     link.addEventListener('click', (e) => {
@@ -263,6 +270,7 @@ if (document.querySelector('.admin-page')) {
       if (target === 'dashboard') renderDashboard();
       if (target === 'adherents') renderAdherentsTable();
       if (target === 'articles') renderArticlesTable();
+      if (target === 'users') renderUsersTable();
     });
   });
 
@@ -282,12 +290,19 @@ if (document.querySelector('.admin-page')) {
   // Modal logic
   setupAdherentModal();
   setupArticleModal();
+  if (isSuperAdmin()) {
+    setupUserModal();
+  }
 }
 
 function checkAdminAuth() {
   if (!sessionStorage.getItem('adminLoggedIn')) {
     window.location.href = 'login.html';
   }
+}
+
+function isSuperAdmin() {
+  return parseInt(sessionStorage.getItem('adminRole')) === 2;
 }
 
 // ============================================
@@ -555,4 +570,122 @@ function deleteArticle(id) {
   renderDashboard();
   renderArticlesTable();
   renderArticles();
+}
+
+// ============================================
+// Users CRUD (Super Admin only)
+// ============================================
+function renderUsersTable() {
+  const db = getDB();
+  const tbody = document.getElementById('usersBody');
+  if (!tbody) return;
+  const currentEmail = sessionStorage.getItem('adminEmail');
+  tbody.innerHTML = db.users.map((u, i) => `
+    <tr>
+      <td>${u.email}</td>
+      <td>${u.role === 2 ? 'Super Admin' : 'Admin'}</td>
+      <td>
+        <div class="admin-table-actions">
+          ${u.email !== currentEmail ? `
+            <button class="btn-icon btn-icon-edit" data-edit-user="${i}" title="Modifier">
+              <span class="material-symbols-outlined">edit</span>
+            </button>
+            <button class="btn-icon btn-icon-delete" data-delete-user="${i}" title="Supprimer">
+              <span class="material-symbols-outlined">delete</span>
+            </button>
+          ` : '<span class="admin-table-current">Vous</span>'}
+        </div>
+      </td>
+    </tr>
+  `).join('');
+
+  tbody.querySelectorAll('[data-edit-user]').forEach(btn => {
+    btn.addEventListener('click', () => openUserModal(parseInt(btn.dataset.editUser)));
+  });
+  tbody.querySelectorAll('[data-delete-user]').forEach(btn => {
+    btn.addEventListener('click', () => deleteUser(parseInt(btn.dataset.deleteUser)));
+  });
+}
+
+function setupUserModal() {
+  const overlay = document.getElementById('userModal');
+  if (!overlay) return;
+
+  document.getElementById('btnAddUser').addEventListener('click', () => {
+    document.getElementById('userModalTitle').textContent = 'Ajouter un utilisateur';
+    document.getElementById('editUserIndex').value = '';
+    document.getElementById('userForm').reset();
+    document.getElementById('uPassword').required = true;
+    overlay.classList.add('open');
+  });
+
+  document.getElementById('userModalClose').addEventListener('click', () => overlay.classList.remove('open'));
+  document.getElementById('userModalCancel').addEventListener('click', () => overlay.classList.remove('open'));
+  overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.classList.remove('open'); });
+
+  document.getElementById('userForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const db = getDB();
+    const fd = new FormData(e.target);
+    const editIndex = document.getElementById('editUserIndex').value;
+
+    const email = fd.get('Email').trim();
+    const password = fd.get('Password').trim();
+
+    // Check duplicate email
+    const existingIdx = db.users.findIndex((u, i) => u.email === email && i !== parseInt(editIndex || -1));
+    if (existingIdx !== -1) {
+      alert('Cet e-mail est déjà utilisé.');
+      return;
+    }
+
+    if (editIndex) {
+      const idx = parseInt(editIndex);
+      db.users[idx].email = email;
+      if (password) db.users[idx].password = password;
+      db.users[idx].role = parseInt(fd.get('Role')) || 1;
+    } else {
+      if (!password) {
+        alert('Le mot de passe est requis.');
+        return;
+      }
+      db.users.push({
+        email: email,
+        password: password,
+        role: parseInt(fd.get('Role')) || 1
+      });
+    }
+
+    saveDB(db);
+    overlay.classList.remove('open');
+    renderUsersTable();
+  });
+}
+
+function openUserModal(index) {
+  const db = getDB();
+  const u = db.users[index];
+  if (!u) return;
+  document.getElementById('userModalTitle').textContent = "Modifier un utilisateur";
+  document.getElementById('editUserIndex').value = index;
+  document.getElementById('uEmail').value = u.email;
+  document.getElementById('uPassword').value = '';
+  document.getElementById('uPassword').required = false;
+  document.getElementById('uRole').value = u.role;
+  document.getElementById('userModal').classList.add('open');
+}
+
+function deleteUser(index) {
+  const db = getDB();
+  const u = db.users[index];
+  if (!u) return;
+  const currentEmail = sessionStorage.getItem('adminEmail');
+  if (u.email === currentEmail) {
+    alert('Vous ne pouvez pas vous supprimer vous-même.');
+    return;
+  }
+  if (!confirm(`Supprimer l'utilisateur ${u.email} ?`)) return;
+  db.users.splice(index, 1);
+  saveDB(db);
+  renderUsersTable();
 }
