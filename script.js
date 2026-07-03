@@ -4,7 +4,24 @@
 const DB_KEY = 'commanderie_db';
 
 function initDB() {
-  if (localStorage.getItem(DB_KEY)) return;
+  const existing = localStorage.getItem(DB_KEY);
+  if (existing) {
+    const db = JSON.parse(existing);
+    let changed = false;
+    if (!db.users) { db.users = []; changed = true; }
+    if (!db.users.find(u => u.email === 'superadmin@commanderie.fr')) {
+      db.users.push({ email: 'superadmin@commanderie.fr', password: 'super123', role: 2 });
+      changed = true;
+    }
+    if (!db.users.find(u => u.email === 'admin@commanderie.fr')) {
+      db.users.push({ email: 'admin@commanderie.fr', password: 'admin123', role: 1 });
+      changed = true;
+    }
+    if (!db.nextAdherentId) { db.nextAdherentId = 8; changed = true; }
+    if (!db.nextArticleId) { db.nextArticleId = 4; changed = true; }
+    if (changed) localStorage.setItem(DB_KEY, JSON.stringify(db));
+    return;
+  }
   const db = {
     adherents: [
       { id_adherent: 1, Nom: 'De La Clergerie', Prénom: 'Laurent', Mail: 'fezui', Numero_telephone: '0612345678', '1er_parrain': 'Jeffrey Epstein', '2eme_parrain': 'Donald Trump', Date_de_naissance: '2006-11-11', Lieu_naissance: 'Lyon', Profession: 'PDG', Adresse_perso: 'TKT', Adresse_pro: 'LDLC ARENA', Nom_conjoint: 'Ma', Prénom_conjoint: 'Femme', Role: 0, Date_inscription: '2026-07-02 12:22:04' },
